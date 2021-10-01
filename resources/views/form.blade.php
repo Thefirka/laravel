@@ -9,6 +9,7 @@
 <body>
 <form action="/post" method="post">
   @csrf
+
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
