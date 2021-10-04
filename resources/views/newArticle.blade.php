@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>test</title>
+    <title>New Article</title>
 </head>
 <body>
-<form action="/post" method="post">
-  @csrf
+<form action="{{route('newArticlePost')}}" method="post">
+    @csrf
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -19,10 +19,9 @@
             </ul>
         </div>
     @endif
-   <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-   Enter email <input type="email" name="email">
-   Enter password <input type="password" name="password">
+    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+    Article title <input type="text" name="title">
+    Article body  <input type="text" name="body">
     <input type="submit">
-</form>
 </body>
 </html>

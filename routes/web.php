@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\CurrentUserArticlesController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NewArticle;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Http\Controllers\FormController;
+use App\Http\Controllers\MyRegisterController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,10 +17,17 @@ use App\Http\Controllers\FormController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'view'])->name('index');
 
-Route::get('/form', [FormController::class, 'view']);
+Route::get('/my-register', [MyRegisterController::class, 'view'])->name('myRegister');
 
-Route::post('/post', [FormController::class, 'post']);
+Route::post('/my-register-post', [MyRegisterController::class, 'post'])->name('registerPost');
+
+Auth::routes();
+
+Route::get('/home', [CurrentUserArticlesController::class, 'index'])->name('home');
+
+Route::get('/new-article', [NewArticle::class, 'view'])->name('newArticle');
+
+Route::post('/new-article-post', [NewArticle::class, 'post'])->name('newArticlePost');
+
