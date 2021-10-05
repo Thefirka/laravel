@@ -1,11 +1,9 @@
 <?php
 
-use App\Http\Controllers\CurrentUserArticlesController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NewArticle;
+use App\Http\Controllers\Front\ArticleController;
+use App\Http\Controllers\Front\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MyRegisterController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,17 +15,22 @@ use App\Http\Controllers\MyRegisterController;
 |
 */
 
-Route::get('/', [HomeController::class, 'view'])->name('index');
+Route::get('/', [ ArticleController::class, 'allArticles' ])->name('home');
 
-Route::get('/my-register', [MyRegisterController::class, 'view'])->name('myRegister');
+Route::get('/my-register', [ UserController::class, 'registerNewUser' ])->name('myRegister');
 
-Route::post('/my-register-post', [MyRegisterController::class, 'post'])->name('registerPost');
+Route::post('/my-register-post', [ UserController::class, 'registerPost' ])->name('registerPost');
 
 Auth::routes();
 
-Route::get('/home', [CurrentUserArticlesController::class, 'index'])->name('home');
+Route::get('/articles', [ ArticleController::class, 'allCurrentUserArticles' ])->name('articles');
 
-Route::get('/new-article', [NewArticle::class, 'view'])->name('newArticle');
+Route::get('/new-article', [ ArticleController::class, 'newArticle' ] )->name('newArticle');
 
-Route::post('/new-article-post', [NewArticle::class, 'post'])->name('newArticlePost');
+Route::post('/new-article', [ ArticleController::class, 'createArticle' ]);
 
+Route::get('/article/{slug}', [ ArticleController::class, 'showArticle' ])->name('article');
+
+Route::get('/next/{slug}', [ ArticleController::class, 'loadMyNextArticle' ])->name('nextArticle');
+
+Route::get('/previous/{slug}', [ ArticleController::class, 'loadMyPreviousArticle' ])->name('previousArticle');

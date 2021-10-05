@@ -8,7 +8,8 @@
         <title>Articles</title>
     </head>
     @foreach($articles as $article)
-       <p>{{ $article->title }}</p>
+        <p> <a href="{{ route('article', $article->title)}}">{{ $article->title }}</a></p>
     @endforeach
+    {{ $articles->links("pagination::bootstrap-4") }}
 </html>
 @endsection

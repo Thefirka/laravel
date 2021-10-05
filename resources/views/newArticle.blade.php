@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
+@section('content')
+    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>New Article</title>
-</head>
-<body>
-<form action="{{route('newArticlePost')}}" method="post">
+        <title>New Article</title>
+    </head>
+<form action="{{ route('newArticle') }}" method="post">
     @csrf
 
     @if ($errors->any())
@@ -23,5 +23,5 @@
     Article title <input type="text" name="title">
     Article body  <input type="text" name="body">
     <input type="submit">
-</body>
-</html>
+</form>
+@endsection

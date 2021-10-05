@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Article extends Model
 {
     use HasFactory;
+
+    /**
+     * @var string
+     */
+    protected $table = 'articles';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -15,10 +21,17 @@ class Article extends Model
      */
     protected $fillable = [
         'title',
-        'body'
+        'body',
+        'user_id'
     ];
-    public function authorId()
+
+    public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function testDatabase()
+    {
+        Article::factory()->count(50)->create();
     }
 }
