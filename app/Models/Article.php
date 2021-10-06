@@ -30,8 +30,8 @@ class Article extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function testDatabase()
+    public function comments()
     {
-        Article::factory()->count(50)->create();
+        return $this->hasMany(Comment::class);
     }
 }

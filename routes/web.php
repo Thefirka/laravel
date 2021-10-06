@@ -23,14 +23,18 @@ Route::post('/my-register-post', [ UserController::class, 'registerPost' ])->nam
 
 Auth::routes();
 
-Route::get('/articles', [ ArticleController::class, 'allCurrentUserArticles' ])->name('articles');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/new-article', [ ArticleController::class, 'newArticle' ] )->name('newArticle');
 
-Route::get('/new-article', [ ArticleController::class, 'newArticle' ] )->name('newArticle');
+    Route::post('/new-article', [ ArticleController::class, 'createArticle' ]);
 
-Route::post('/new-article', [ ArticleController::class, 'createArticle' ]);
+    Route::post('/loadArticle/{slug}', [ ArticleController::class, 'loadArticle' ])->name('loadArticle');
+
+    Route::post('/deleteArticle/{slug}', [ ArticleController::class, 'deleteArticle' ])->name('deleteArticle');
+
+    Route::get('/articles', [ ArticleController::class, 'allCurrentUserArticles' ])->name('articles');
+});
 
 Route::get('/article/{slug}', [ ArticleController::class, 'showArticle' ])->name('article');
 
-Route::get('/next/{slug}', [ ArticleController::class, 'loadMyNextArticle' ])->name('nextArticle');
-
-Route::get('/previous/{slug}', [ ArticleController::class, 'loadMyPreviousArticle' ])->name('previousArticle');
+Route::post('');

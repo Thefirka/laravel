@@ -20,8 +20,9 @@
         </div>
     @endif
     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-    Article title <input type="text" name="title">
-    Article body  <input type="text" name="body">
+    Article title <input type="text" name="title">Article body
+    <textarea rows = "5" cols = "50" name = "body"></textarea>
     <input type="submit">
 </form>
+
 @endsection
