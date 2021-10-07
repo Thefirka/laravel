@@ -16,7 +16,8 @@ class ArticleController extends Controller
 
             $currentUser = Auth::user()->id;
             $articles = Article::where('user_id', '=', "$currentUser")->get();
-            return view('currentUserArticles', ['articles' => $articles]);
+
+            return view('currentUserArticles', [ 'articles' => $articles ] );
         } else {
             return redirect('/login');
         }
@@ -47,19 +48,14 @@ class ArticleController extends Controller
     public function showArticle($slug)
     {
         $article = Article::where('title', '=', "$slug")->first();
-        $comments = $article->comments()->get()->all();
-        
-        foreach ($comments as $comment) {
-            if ($comment->children()->get()->all()) {
-                dump($comment->children()->get()->all());
-            }
-        }
-//        dump('========================================');
-//        foreach ($article->comments()->get()->all() as $item) {
-//            dump($item->parent()->get()->all());
+        $comments = $article->comments()->get();
+//        foreach ($comments as $comment) {
+//            if ($comment->children()->get()->all()) {
+//                dd($comment);
+//            }
 //        }
         if ($article != null) {
-            return view('article', [ 'article' => $article ] );
+            return view('article', [ 'article' => $article, 'comments' => $comments ]);
         } else {
            return redirect('/');
         }

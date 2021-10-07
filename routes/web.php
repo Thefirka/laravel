@@ -26,7 +26,7 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/new-article', [ ArticleController::class, 'newArticle' ] )->name('newArticle');
 
-    Route::post('/new-article', [ ArticleController::class, 'createArticle' ]);
+    Route::post('/new-article', [ ArticleController::class, 'createArticle' ] );
 
     Route::post('/loadArticle/{slug}', [ ArticleController::class, 'loadArticle' ])->name('loadArticle');
 
