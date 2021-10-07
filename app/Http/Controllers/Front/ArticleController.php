@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
+    public const PREVIOUSARTICLE = 'My Previous Article';
+    public const NEXTARTICLE     = 'My Next Article';
     public function allCurrentUserArticles()
     {
         if (Auth::user() != null) {
@@ -47,19 +50,14 @@ class ArticleController extends Controller
     }
     public function showArticle($slug)
     {
-        $article = Article::where('title', '=', "$slug")->first();
-        $comments = $article->comments()->get();
-
-//        foreach ($comments as $comment) {
-//            if ($comment->children()->get()->all()) {
-//                dd($comment);
-//            }
-//        }
-//        dump('========================================');
-//        foreach ($article->comments()->get()->all() as $item) {
-//            dump($item->parent()->get()->all());
-//        }
-        if ($article != null) {
+        $article  = Article::where('title', '=', "$slug")->first();
+        if (Comment::exists()) {
+            $comments = $article->comments()->get();
+            dd($comments);
+        } else {
+            $comments = [];
+        }
+        if ($article) {
             return view('article', [ 'article' => $article, 'comments' => $comments ]);
         } else {
            return redirect('/');
@@ -70,7 +68,7 @@ class ArticleController extends Controller
     {
         $loadArticle = $request->post('LoadArticle');
 
-        if ($loadArticle == 'My Previous Article') {
+        if ($loadArticle === self::PREVIOUSARTICLE) {
 
             $currentArticle = Article::where('title', '=', "$slug")->first();
             $currentArticleTimestamp = ($currentArticle->created_at->timestamp);
@@ -83,7 +81,7 @@ class ArticleController extends Controller
                     return redirect(route('article', $article->title));
                 }
             }
-        } elseif ($loadArticle == 'My Next Article') {
+        } elseif ($loadArticle === self::NEXTARTICLE) {
 
             $currentArticle = Article::where('title', '=', "$slug")->first();
             $currentArticleTimestamp = ($currentArticle->created_at->timestamp);

@@ -15,6 +15,7 @@
             <input type="submit" name="LoadArticle" value="My Next Article">
             <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
         </form>
+    </div>
     @endif
 {{--        Write comment<br><br>--}}
 {{--        <form method="post" action="">--}}
@@ -23,13 +24,15 @@
 {{--        </form>--}}
 
     @foreach($comments as $comment)
-        {{$comment->body}}
-        @if($comment->children()->get()->all())
+{{--            @if(!$comment->parent_id)--}}
+{{--                {{$comment->body}}--}}
+{{--            @endif--}}
+        @if($comment->children()->get())
+            @foreach($comment->get() as $reply)
+                {{$reply->body}}
 
+            @endforeach
         @endif
-{{--        @foreach($comment->parent()->get()->all() as $reply)--}}
 
-{{--           Я КАМЕНТ КАМЕНТА {{$reply->body}}--}}
-{{--        @endforeach--}}
     @endforeach
 @endsection

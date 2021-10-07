@@ -27,12 +27,12 @@ class Comment extends Model
 
     public function parent()
     {
-        return $this->hasMany(Comment::class, 'parent_id');
+        return $this->belongsTo(Comment::class, 'parent_id');
     }
 
     public function children()
     {
-        return $this->belongsTo(Comment::class, 'parent_id');
+        return $this->hasMany(Comment::class, 'parent_id');
     }
 
 
