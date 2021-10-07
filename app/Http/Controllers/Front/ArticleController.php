@@ -49,10 +49,15 @@ class ArticleController extends Controller
     {
         $article = Article::where('title', '=', "$slug")->first();
         $comments = $article->comments()->get();
+
 //        foreach ($comments as $comment) {
 //            if ($comment->children()->get()->all()) {
 //                dd($comment);
 //            }
+//        }
+//        dump('========================================');
+//        foreach ($article->comments()->get()->all() as $item) {
+//            dump($item->parent()->get()->all());
 //        }
         if ($article != null) {
             return view('article', [ 'article' => $article, 'comments' => $comments ]);

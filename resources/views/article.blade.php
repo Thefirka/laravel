@@ -16,21 +16,20 @@
             <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
         </form>
     @endif
-        <br>
-        Write comment<br><br>
-        <form method="post" action="">
-            <textarea rows = "5" cols = "50" name = "body"></textarea>
-            <input type="submit">
-        </form>
+{{--        Write comment<br><br>--}}
+{{--        <form method="post" action="">--}}
+{{--            <textarea rows = "5" cols = "50" name = "body"></textarea>--}}
+{{--            <input type="submit">--}}
+{{--        </form>--}}
 
     @foreach($comments as $comment)
         {{$comment->body}}
-        <br>
-        @foreach($comment->children()->get()->all() as $reply)
-                <div style="position: relative ; right: 100px; bottom: 30px">
-            {{$reply->body}}
-                </div>
-        @endforeach
+        @if($comment->children()->get()->all())
 
+        @endif
+{{--        @foreach($comment->parent()->get()->all() as $reply)--}}
+
+{{--           Я КАМЕНТ КАМЕНТА {{$reply->body}}--}}
+{{--        @endforeach--}}
     @endforeach
 @endsection
