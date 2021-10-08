@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Models;
-
+use Kalnoy\Nestedset\NodeTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class Article extends Model
 {
     use HasFactory;

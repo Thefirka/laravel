@@ -50,10 +50,59 @@ class ArticleController extends Controller
     }
     public function showArticle($slug)
     {
+
+
+        $array = [
+            1,
+            2,
+            3,
+            [
+                41,
+                42,
+                [
+                    431,
+                    432,
+                ]
+            ],
+            [
+                51,
+                [
+                    521,
+                    [
+                        5221,
+                        5222,
+                    ],
+                ]
+            ],
+            6
+        ];
+        $str = '';
+       $recursive = function ($array, $str)  use ( &$recursive )
+        {
+            foreach ($array as $item) {
+                if (is_array($item)) {
+                     $recursive($item, $str);
+                } else {
+                    $str .= $item;
+                    $str .= ',';
+                }
+                dump($str);
+            }
+        };
+
+        $recursive($array, $str);
+
+
+//         '1,2,3,41,42,431,432,51,521,5221,5222,6';
+
+        exit();
         $article  = Article::where('title', '=', "$slug")->first();
+
         if (Comment::exists()) {
             $comments = $article->comments()->get();
-            dd($comments);
+            foreach ($comments as $comment) {
+                dump($comment->children()->get());
+            }
         } else {
             $comments = [];
         }
