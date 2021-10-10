@@ -17,22 +17,13 @@
         </form>
     </div>
     @endif
-{{--        Write comment<br><br>--}}
-{{--        <form method="post" action="">--}}
-{{--            <textarea rows = "5" cols = "50" name = "body"></textarea>--}}
-{{--            <input type="submit">--}}
-{{--        </form>--}}
-
-    @foreach($comments as $comment)
-{{--            @if(!$comment->parent_id)--}}
-{{--                {{$comment->body}}--}}
-{{--            @endif--}}
-        @if($comment->children()->get())
-            @foreach($comment->get() as $reply)
-                {{$reply->body}}
-
-            @endforeach
-        @endif
-
-    @endforeach
+<h4>Add comment</h4>
+<form method="post" action="{{ route('commentController.add') }}">
+    @csrf
+    <div class="form-group">
+        <input type="text" name="comment_body" class="form-control" />
+        <input type="hidden" name="article_id" value="{{ $article->id }}" />
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-warning" value="Add Comment" />
 @endsection

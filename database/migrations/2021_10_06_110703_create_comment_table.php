@@ -19,9 +19,10 @@ class CreateCommentTable extends Migration
             $table->timestamps();
             $table->text('body');
             $table->bigInteger('article_id')->unsigned();
-            $table->bigInteger('parent_id')->unsigned()->nullable();
+            $table->bigInteger('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('article_id')->references('id')->on('articles');
-            $table->foreign('parent_id')->references('id')->on('comments');
+            $table->nestedSet();
         });
     }
 

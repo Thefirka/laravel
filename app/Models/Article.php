@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-use Kalnoy\Nestedset\NodeTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 class Article extends Model
@@ -21,7 +20,8 @@ class Article extends Model
     protected $fillable = [
         'title',
         'body',
-        'user_id'
+        'user_id',
+        'comment_id'
     ];
 
     public function user()

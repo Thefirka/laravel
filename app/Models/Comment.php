@@ -8,7 +8,7 @@ use Kalnoy\Nestedset\NodeTrait;
 
 class Comment extends Model
 {
-    use HasFactory;
+    use HasFactory, NodeTrait;
 
     /**
      * The attributes that are mass assignable.
