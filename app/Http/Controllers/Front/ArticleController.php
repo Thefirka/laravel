@@ -53,11 +53,7 @@ class ArticleController extends Controller
         $article  = Article::where('title', '=', "$slug")->first();
 
         if (Comment::exists()) {
-            $comments = Comment::defaultOrder()->descendantsAndSelf($article->id);
-            dd($comments);
-            foreach ($comments as $comment) {
-                ($comment->children()->get()->all());
-            }
+            $comments = Comment::defaultOrder()->get();
         } else {
             $comments = [];
         }

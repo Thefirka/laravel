@@ -9,6 +9,4 @@
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
         </form>
     @endforeach
-
-{{--    {{ $articles->links("pagination::bootstrap-4") }}--}}
 @endsection

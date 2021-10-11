@@ -18,12 +18,27 @@
     </div>
     @endif
 <h4>Add comment</h4>
-<form method="post" action="{{ route('commentController.add') }}">
+<form action="{{ route('newComment') }}" method="post">
     @csrf
-    <div class="form-group">
-        <input type="text" name="comment_body" class="form-control" />
-        <input type="hidden" name="article_id" value="{{ $article->id }}" />
-    </div>
-    <div class="form-group">
-        <input type="submit" class="btn btn-warning" value="Add Comment" />
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    @foreach($comments as $comment)
+        @if(!$comment->parent_id)
+        {{$comment->body}}
+        <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+        Write comment <input type="text" name="body">
+        <input type="hidden" name="article_id" value="{{ $article->id }}"/>
+            <input type="hidden" name="article_id" value="{{ $comment->id }}"/>
+        <input type="submit">
+</form>
+    @endif
+    @endforeach
 @endsection

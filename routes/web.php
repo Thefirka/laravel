@@ -38,4 +38,4 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/article/{slug}', [ ArticleController::class, 'showArticle' ])->name('article');
 
-Route::post('/commentController/store', [ CommentController::class, 'newComment'])->name('commentController.add');
+Route::post('/commentController/store', [ CommentController::class, 'store'])->name('newComment');
