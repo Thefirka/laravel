@@ -51,14 +51,45 @@ class ArticleController extends Controller
     public function showArticle($slug)
     {
         $article  = Article::where('title', '=', "$slug")->first();
+        if (Comment::where('article_id', '=', "$article->id")->get()->all()) {
+            $article_id = $article->id;
+            $comments = Comment::where('article_id', '=', "$article->id")->get()->toTree();
+            $recursion = function ($comments, $article_id) use (&$recursion) {
+                foreach ($comments as $comment) {
+                    static $commentShow;
+                    static $rightPosition;
+                     $commentShow .= " <div style=\"width:250px;height:50px;border:1px solid #000;\">{$comment->body}</div>
+<br>
+    <form action=\"{{route('newComment')}}\" method='post'>
+    <input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token()}}\"/>
+    Write reply <input type=\"text\" name=\"body\">
+    <input type=\"hidden\" name=\"article_id\" value=\"$article_id\"/>
+    <input type=\"hidden\" name=\"comment_id\" value=\"$comment->id\"/>
+    <input type=\"submit\">
+    </form>
+    </div>
+    <br>";
 
-        if (Comment::exists()) {
-            $comments = Comment::defaultOrder()->get();
+                    if ($comment->parent && (!$comment->children->all())) {
+                        $rightPosition = 250;
+                        $nextLevel = "<div style = \"position:relative;"."left:$rightPosition".'px'.";\"top: 20px;\">";
+                        $commentShow .= $nextLevel;
+                    }
+                    if ($comment->children->all()) {
+                        $rightPosition += 250;
+                        $nextLevel = "<div style = \"position:relative;"."left:$rightPosition".'px'.";\"top: 20px;\">";
+                        $commentShow .= $nextLevel;
+                        $recursion($comment->children, $article_id);
+                    }
+                }
+                return $commentShow;
+            };
+            $commentShow = $recursion($comments, $article_id);
         } else {
-            $comments = [];
+            $commentShow = "";
         }
         if ($article) {
-            return view('article', [ 'article' => $article, 'comments' => $comments ]);
+            return view('article', [ 'article' => $article, 'commentShow' => $commentShow ]);
         } else {
            return redirect('/');
         }

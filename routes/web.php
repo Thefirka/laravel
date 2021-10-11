@@ -34,8 +34,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/deleteArticle/{slug}', [ ArticleController::class, 'deleteArticle' ])->name('deleteArticle');
 
     Route::get('/articles', [ ArticleController::class, 'allCurrentUserArticles' ])->name('articles');
+
+    Route::post('/commentController/store', [ CommentController::class, 'store'])->name('newComment');
 });
 
 Route::get('/article/{slug}', [ ArticleController::class, 'showArticle' ])->name('article');
 
-Route::post('/commentController/store', [ CommentController::class, 'store'])->name('newComment');
