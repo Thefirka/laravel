@@ -60,8 +60,8 @@ class ArticleController extends Controller
                     static $rightPosition;
                      $commentShow .= " <div style=\"width:250px;height:50px;border:1px solid #000;\">{$comment->body}</div>
 <br>
-    <form action=\"{{route('newComment')}}\" method='post'>
-    <input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token()}}\"/>
+    <form action=\"".route('newComment') ."\" method='post'>
+    <input type=\"hidden\" name=\"_token\" value=\"". csrf_token()."\"/>
     Write reply <input type=\"text\" name=\"body\">
     <input type=\"hidden\" name=\"article_id\" value=\"$article_id\"/>
     <input type=\"hidden\" name=\"comment_id\" value=\"$comment->id\"/>

@@ -19,8 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::group([
 
-    'middleware' => 'api',
-    'namespace' => 'App\Http\Controllers',
+    'namespace' => 'App\Http\Controllers\Api',
     'prefix' => 'auth'
 
 ], function ($router) {
