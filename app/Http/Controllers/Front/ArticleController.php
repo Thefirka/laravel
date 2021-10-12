@@ -20,10 +20,11 @@ class ArticleController extends Controller
             $currentUser = Auth::user()->id;
             $articles = Article::where('user_id', '=', "$currentUser")->get();
 
-            return view('currentUserArticles', [ 'articles' => $articles ] );
-        } else {
-            return redirect('/login');
+            return view('currentUserArticles', ['articles' => $articles]);
         }
+//        else {
+//            return redirect('/login');
+//        }
     }
 
     public function allArticles()

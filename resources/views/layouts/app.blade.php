@@ -37,19 +37,19 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
-                            @if (Route::has('login'))
+                            @if (Route::has('loginPage'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    <a class="nav-link" href="{{ route('loginPage') }}">{{ __('Login') }}</a>
                                 </li>
                             @endif
 
-                            @if (Route::has('myRegister'))
+                            @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('myRegister') }}">Registration</a>
+                                    <a class="nav-link" href="{{ route('registerPage') }}">Registration</a>
                                 </li>
                             @endif
                         @else
-                                   @if( Auth::user())
+                                   @if(JWTAuth::parseToken()->authenticate());)
                                        <div align="center">
                                        <a href="{{route('articles')}}">All my articles</a>
                                        <a href="{{route('newArticle')}}">Make new Article</a>

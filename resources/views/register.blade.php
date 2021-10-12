@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<form action="{{route('registerPost')}}" method="post">
+<form action="{{route('register')}}" method="post">
   @csrf
 
     @if ($errors->any())

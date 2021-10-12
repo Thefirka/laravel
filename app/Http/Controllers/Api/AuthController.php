@@ -17,9 +17,9 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)
             ->first();
-        dd($user);
-        if(!$user || !Hash::check($request->password, $user->password)){
 
+
+        if(!$user || !Hash::check($request->password, $user->password)){
             return response()->json([
                 'success' => false,
                 'message' => "Incorrect email or password."
@@ -32,18 +32,29 @@ class AuthController extends Controller
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-
-        return $this->respondWithToken($token, $user);
+        return $this->respondWithToken($user);
     }
 
-//    public function signUp(RegisterRequest $request)
-//    {
-//        User::create([
-//            'name'     => $request->name,
-//            'email'    => $request->email,
-//            'password' => Hash::make($request->password)
-//        ]);
-//        $token = JWTAuth::fromUser($user);
-//        return $token;
-//    }
+    public function register(RegisterRequest $request)
+    {
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+        return response()->json([
+            'message' => 'User successfully registered',
+            'user' => $user
+        ], 201);
+    }
+    private function respondWithToken($user)
+    {
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+        'access_token' => $token,
+        'token_type' => 'bearer',
+        'user' => $user
+    ]);
+    }
 }

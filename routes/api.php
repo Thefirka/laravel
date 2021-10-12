@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,10 +24,12 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
+    Route::post('login', [ AuthController::class, 'login' ])->name('login');
+    Route::post('register', [ AuthController::class, 'register' ])->name('register');
+    Route::middleware(['jwt.verify'])->group(function () {
 
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
-
+//    Route::post('logout', 'AuthController@logout');
+//    Route::post('refresh', 'AuthController@refresh');
+//    Route::post('me', 'AuthController@me');
+    });
 });
