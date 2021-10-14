@@ -11,6 +11,7 @@ class CommentController extends Controller
 {
     public function store(CommentRequest $commentRequest)
     {
+//        dd($commentRequest->body);
         $user = Auth::user();
         $user->comments()->create([
             'body' => $commentRequest->body,

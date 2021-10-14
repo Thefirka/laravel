@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Front\ArticleController;
 use App\Http\Controllers\Front\CommentController;
-use App\Http\Controllers\Front\AuthController;
+use App\Http\Controllers\Front\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 /*
@@ -18,11 +18,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ ArticleController::class, 'allArticles' ])->name('home');
 
-Route::get('/login', [ AuthController::class, 'login' ])->name('loginPage');
+Route::get('/my-register', [ UserController::class, 'registerNewUser' ])->name('myRegister');
 
-Route::get('/register', [ AuthController::class, 'registerNewUser' ])->name('registerPage');
+Route::post('/my-register-post', [ UserController::class, 'registerPost' ])->name('registerPost');
 
-Route::middleware(['jwt.verify'])->group(function () {
+Auth::routes();
+
+Route::middleware(['auth'])->group(function () {
+
     Route::get('/new-article', [ ArticleController::class, 'newArticle' ] )->name('newArticle');
 
     Route::post('/new-article', [ ArticleController::class, 'createArticle' ] );

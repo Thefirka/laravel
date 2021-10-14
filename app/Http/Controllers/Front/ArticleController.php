@@ -8,6 +8,7 @@ use App\Models\Article;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ArticleController extends Controller
 {
@@ -15,21 +16,14 @@ class ArticleController extends Controller
     public const NEXTARTICLE     = 'My Next Article';
     public function allCurrentUserArticles()
     {
-        if (Auth::user() != null) {
-
             $currentUser = Auth::user()->id;
             $articles = Article::where('user_id', '=', "$currentUser")->get();
 
             return view('currentUserArticles', ['articles' => $articles]);
-        }
-//        else {
-//            return redirect('/login');
-//        }
     }
 
     public function allArticles()
     {
-
         $articles = Article::paginate(2);
 
         return view('home', [ 'articles' => $articles ]);
@@ -57,6 +51,8 @@ class ArticleController extends Controller
             $comments = Comment::where('article_id', '=', "$article->id")->get()->toTree();
             $recursion = function ($comments, $article_id) use (&$recursion) {
                 foreach ($comments as $comment) {
+                    $comment_id = $comment->id;
+
                     static $commentShow;
                     static $rightPosition;
                      $commentShow .= " <div style=\"width:250px;height:50px;border:1px solid #000;\">{$comment->body}</div>
@@ -65,13 +61,13 @@ class ArticleController extends Controller
     <input type=\"hidden\" name=\"_token\" value=\"". csrf_token()."\"/>
     Write reply <input type=\"text\" name=\"body\">
     <input type=\"hidden\" name=\"article_id\" value=\"$article_id\"/>
-    <input type=\"hidden\" name=\"comment_id\" value=\"$comment->id\"/>
+    <input type=\"hidden\" name=\"parent_id\" value=\"$comment_id\"/>
     <input type=\"submit\">
     </form>
     </div>
     <br>";
-
                     if ($comment->parent && (!$comment->children->all())) {
+
                         $rightPosition = 250;
                         $nextLevel = "<div style = \"position:relative;"."left:$rightPosition".'px'.";\"top: 20px;\">";
                         $commentShow .= $nextLevel;
@@ -82,6 +78,7 @@ class ArticleController extends Controller
                         $commentShow .= $nextLevel;
                         $recursion($comment->children, $article_id);
                     }
+
                 }
                 return $commentShow;
             };

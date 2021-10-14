@@ -50,6 +50,7 @@ class RegisterController extends Controller
      */
     protected function create(RegisterRequest $request)
     {
+        dd('asdasd');
         return User::create([
             'name' => $request->name,
             'email' => $request->email,

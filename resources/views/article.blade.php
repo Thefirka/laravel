@@ -5,9 +5,9 @@
  <form action="{{ route('newComment') }}" method="post">
      @csrf
      <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-     Write comment <input type="text" name="title">
-     <input type="hidden" name="{{$article->id}}" value="{{$article->id}}"/>
-     <input type="hidden" name="comment_id" value="NULL"/>
+     Write comment <input type="text" name="body">
+     <input type="hidden" name="article_id" value="{{$article->id}}"/>
+     <input type="hidden" name="parent_id" value=""/>
      <input type="submit">
  </form>
  <br>

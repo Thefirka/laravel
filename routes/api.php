@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Resource\ArticleResourceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,12 +25,21 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-    Route::post('login', [ AuthController::class, 'login' ])->name('login');
-    Route::post('register', [ AuthController::class, 'register' ])->name('register');
-    Route::middleware(['jwt.verify'])->group(function () {
+    Route::post('login', [ AuthController::class, 'login' ])->name('loginApi');
+    Route::post('register', [ AuthController::class, 'register' ])->name('registerApi');
 
-//    Route::post('logout', 'AuthController@logout');
-//    Route::post('refresh', 'AuthController@refresh');
-//    Route::post('me', 'AuthController@me');
-    });
+});
+
+Route::group([
+    'namespace' => 'App\Http\Controllers\Api',
+    'middleware'=> ['jwt.verify']
+
+], function () {
+    Route::post('logout', [ AuthController::class, 'logout' ])->name('logout');
+
+    Route::post('me', [ AuthController::class, 'me' ])->name('me');
+
+    Route::post('refresh', [ AuthController::class, 'refresh' ])->name('refresh');
+
+    Route::resource('articleResource', ArticleResourceController::class);
 });

@@ -18,7 +18,6 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)
             ->first();
 
-
         if(!$user || !Hash::check($request->password, $user->password)){
             return response()->json([
                 'success' => false,
@@ -35,26 +34,41 @@ class AuthController extends Controller
         return $this->respondWithToken($user);
     }
 
-    public function register(RegisterRequest $request)
+    public function register(Request $request)
     {
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password)
+            'name'     => $request->user['name'],
+            'email'    => $request->user['email'],
+            'password' => Hash::make($request->user['password'])
         ]);
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user
         ], 201);
     }
+    public function logout()
+    {
+       return JWTAuth::invalidate(JWTAuth::getToken());
+    }
+
+    public function refresh()
+    {
+        return $this->respondWithToken(auth()->refresh());
+    }
+
+    public function me()
+    {
+        return response()->json(auth()->user());
+    }
+
     private function respondWithToken($user)
     {
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
+        "Authorization" => "Bearer $token",
         'user' => $user
     ]);
     }
+
 }
