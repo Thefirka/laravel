@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Resource\ArticleResourceController;
+use App\Http\Controllers\Resource\ArticleCommentController;
+use App\Http\Controllers\Resource\ArticleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,7 @@ Route::group([
 
 ], function ($router) {
     Route::post('login', [ AuthController::class, 'login' ])->name('loginApi');
+
     Route::post('register', [ AuthController::class, 'register' ])->name('registerApi');
 
 });
@@ -40,6 +42,17 @@ Route::group([
     Route::post('me', [ AuthController::class, 'me' ])->name('me');
 
     Route::post('refresh', [ AuthController::class, 'refresh' ])->name('refresh');
-
-    Route::resource('articleResource', ArticleResourceController::class);
 });
+Route::group(['middleware' => 'jwt.verify'], function () {
+
+Route::apiresources([
+    'articleResource'  => ArticleController::class,
+    'articles.comments'=> ArticleCommentController::class
+]);
+
+    Route::get('allArticles', [ ArticleController::class, 'allArticles' ])->name('allArticles');
+
+    Route::get('allComments/{article_id}', [ ArticleCommentController::class, 'showAll' ])->name('allComments');
+});
+
+
