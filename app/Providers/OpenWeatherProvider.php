@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class CommentsProvider extends ServiceProvider
+class OpenWeatherProvider extends ServiceProvider
 {
     /**
      * Register services.

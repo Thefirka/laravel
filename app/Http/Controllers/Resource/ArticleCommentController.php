@@ -25,7 +25,6 @@ class ArticleCommentController extends Controller
 
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
@@ -62,8 +61,14 @@ class ArticleCommentController extends Controller
      */
     public function show($articleId, $commentId)
     {
-        $comment = new CommentResource(Comment::findOrFail($commentId));
-        return $comment->toArray($articleId);
+        $comment = new CommentResource(Comment::find($commentId));
+        if ($comment){
+            return $comment->toArray($articleId);
+        } else {
+            return response()->json([
+                'message' => 'Comment not found'
+            ]);
+        }
     }
 
     /**
@@ -96,12 +101,18 @@ class ArticleCommentController extends Controller
      */
     public function destroy($id)
     {
-        $comment = Comment::findOrFail($id);
-        $comment->delete();
+        $comment = Comment::find($id);
+        if ($comment){
+            $comment->delete();
 
-        return response()->json([
-            'message' => "Comment successfully deleted"
-        ]);
+            return response()->json([
+                'message' => "Comment successfully deleted"
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Comment not found'
+            ]);
+        }
     }
     public function showAll($articleId) {
         return CommentResource::collection(Comment::where('article_id', '=', "$articleId")->paginate(20));

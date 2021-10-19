@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\CommentObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\NodeTrait;
@@ -19,6 +20,10 @@ class Comment extends Model
         'article_id',
         'body',
         'parent_id'
+    ];
+
+    protected $dispatchesEvents = [
+        'saved' => CommentObserver::class
     ];
 
     public function article()

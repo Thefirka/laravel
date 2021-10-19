@@ -80,14 +80,19 @@ class ArticleController extends Controller
         if ($validator->fails()) {
             $response['response'] = $validator->messages();
         }else{
-            $article = (new ArticleResource(Article::findOrFail($id)));
-            $article->resource->title = $request->title;
-            $article->resource->body  = $request->body;
-            $article->resource->save();
+            $article = (new ArticleResource(Article::find($id)));
+            if ($article){
+                $article->resource->title = $request->title;
+                $article->resource->body  = $request->body;
+                $article->resource->save();
 
-            return $article->toArray($request);
+                return $article->toArray($request);
+            } else {
+                return response()->json([
+                    'message' => 'article not found'
+                ]);
             }
-
+            }
         return $response;
     }
 
@@ -98,12 +103,18 @@ class ArticleController extends Controller
      */
     public function destroy($id)
     {
-        $article = Article::findOrFail($id);
-        $article->delete();
+        $article = Article::find($id);
+        if ($article){
+            $article->delete();
 
-        return response()->json([
-            'message' => "article successfully deleted"
-        ]);
+            return response()->json([
+                'message' => "article successfully deleted"
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'article not found'
+            ]);
+        }
     }
 
     public function allArticles() {
