@@ -1,43 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\Resource;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CommentApiRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ArticleCommentController extends Controller
 {
-    private $commentValidationRules = [
-        'body'      => 'required|max:300'
-    ];
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-
+        return CommentResource::collection(Comment::paginate(20));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  CommentApiRequest  $request
      */
-    public function store($id, Request $request)
+    public function store($id, CommentApiRequest $request)
     {
-        $response = [ 'response' => '', 'success' => false ];
-        $validator = Validator::make($request->all(), $this->commentValidationRules);
-
-        if ($validator->fails()) {
-            $response['response'] = $validator->messages();
-        }else{
             $user = JWTAuth::parseToken()->authenticate();
             $user->comments()->create([
                 'body' => $request->body,
@@ -45,13 +29,6 @@ class ArticleCommentController extends Controller
                 'parent_id'  => $request->parent_id,
                 'user_id'    => $user->id
             ]);
-
-            return response()->json([
-                'message' => 'Comment Successfully created',
-            ]);
-        }
-
-        return $response;
     }
 
     /**
@@ -74,24 +51,23 @@ class ArticleCommentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  CommentApiRequest  $request
      * @param  int  $id
      */
-    public function update(Request $request, $id, $commentId)
+    public function update(CommentApiRequest $request, $id, $commentId)
     {
-        $response = [ 'response' => '', 'success' => false ];
-        $validator = Validator::make($request->all(), $this->commentValidationRules);
-        if ($validator->fails()) {
-            $response['response'] = $validator->messages();
-        }else{
-            $comment = (new CommentResource(Comment::where("id", '=', "$commentId")->first()));
+        $comment = (new CommentResource(Comment::where("id", '=', "$commentId")->first()));
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($comment && ($comment->user_id == $user->id)) {
             $comment->resource->body = $request->body;
             $comment->resource->save();
 
             return $comment->toArray($id);
+        } else {
+            return response()->json([
+                'message' => 'Comment not found'
+            ]);
         }
-
-        return $response;
     }
 
     /**
@@ -102,7 +78,8 @@ class ArticleCommentController extends Controller
     public function destroy($id)
     {
         $comment = Comment::find($id);
-        if ($comment){
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($comment && ($comment->user_id == $user->id)) {
             $comment->delete();
 
             return response()->json([

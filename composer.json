@@ -7,15 +7,15 @@
     "require": {
         "php": "^7.3|^8.0",
         "ext-http": "*",
+        "ext-json": "*",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.4",
         "kalnoy/nestedset": "^6.0",
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
-        "tymon/jwt-auth": "^1.0",
-        "ext-json": "*"
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",

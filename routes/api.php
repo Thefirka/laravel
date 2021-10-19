@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Resource\ArticleCommentController;
-use App\Http\Controllers\Resource\ArticleController;
+use App\Http\Controllers\Api\ArticleCommentController;
+use App\Http\Controllers\Api\ArticleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,8 +49,6 @@ Route::apiresources([
     'articleResource'  => ArticleController::class,
     'articles.comments'=> ArticleCommentController::class
 ]);
-
-    Route::get('allArticles', [ ArticleController::class, 'allArticles' ])->name('allArticles');
 
     Route::get('allComments/{article_id}', [ ArticleCommentController::class, 'showAll' ])->name('allComments');
 });

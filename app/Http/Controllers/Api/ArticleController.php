@@ -1,44 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Resource;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ArticleApiRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use http\Env\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ArticleController extends Controller
 {
-    private $articleValidationRules = [
-        'title'     => 'required|max:30|unique:articles,title',
-        'body'      => 'required|max:300'
-    ];
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        return ArticleResource::collection(Article::paginate(20));
     }
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  ArticleApiRequest  $request
      */
-    public function store(Request $request)
+    public function store(ArticleApiRequest $request)
     {
-        $response = [ 'response' => '', 'success' => false ];
-        $validator = Validator::make($request->all(), $this->articleValidationRules);
-
-        if ($validator->fails()) {
-            $response['response'] = $validator->messages();
-        }else{
             $user = JWTAuth::parseToken()->authenticate();
             $user->articles()->create([
                 'title'     => $request->title,
@@ -48,9 +32,6 @@ class ArticleController extends Controller
             return response()->json([
                 'message' => 'Article Successfully created',
             ]);
-        }
-
-        return $response;
     }
 
 
@@ -59,41 +40,32 @@ class ArticleController extends Controller
      *
      * @param  int  $id
      */
-    public function show($id)
+    public function show(Article $id)
     {
-        $article = new ArticleResource(Article::findOrFail($id));
-
-        return $article->toArray($id);
+        return new ArticleResource(Article::findOrFail($id));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  ArticleApiRequest  $request
      * @param  int  $id
      */
-    public function update(Request $request, $id)
+    public function update(ArticleApiRequest $request, $id)
     {
-        $response = [ 'response' => '', 'success' => false ];
-        $validator = Validator::make($request->all(), $this->articleValidationRules);
-
-        if ($validator->fails()) {
-            $response['response'] = $validator->messages();
-        }else{
             $article = (new ArticleResource(Article::find($id)));
-            if ($article){
+            $user = JWTAuth::parseToken()->authenticate();
+            if ($article && ($article->user_id == $user->id)) {
                 $article->resource->title = $request->title;
                 $article->resource->body  = $request->body;
                 $article->resource->save();
-
                 return $article->toArray($request);
             } else {
                 return response()->json([
-                    'message' => 'article not found'
+                    'message' => 'Article not found'
                 ]);
             }
-            }
-        return $response;
+
     }
 
     /**
@@ -104,7 +76,8 @@ class ArticleController extends Controller
     public function destroy($id)
     {
         $article = Article::find($id);
-        if ($article){
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($article && ($article->user_id == $user->id)) {
             $article->delete();
 
             return response()->json([
@@ -115,9 +88,5 @@ class ArticleController extends Controller
                 'message' => 'article not found'
             ]);
         }
-    }
-
-    public function allArticles() {
-        return ArticleResource::collection(Article::paginate(20));
     }
 }
