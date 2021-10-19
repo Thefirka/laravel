@@ -19,7 +19,6 @@ class ArticleApiRequest extends FormRequest
         return [
             'title'     => 'required|max:30|unique:articles,title',
             'body'      => 'required|max:300',
-            'id'        => 'required_without_all|'
         ];
     }
     public function failedValidation(Validator $validator)

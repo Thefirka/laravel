@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CommentApiRequest;
 use App\Http\Resources\CommentResource;
+use App\Models\Article;
 use App\Models\Comment;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -20,12 +21,12 @@ class ArticleCommentController extends Controller
      *
      * @param  CommentApiRequest  $request
      */
-    public function store($id, CommentApiRequest $request)
+    public function store(Article $article, CommentApiRequest $request)
     {
             $user = JWTAuth::parseToken()->authenticate();
             $user->comments()->create([
                 'body' => $request->body,
-                'article_id' => $id,
+                'article_id' => $article->id,
                 'parent_id'  => $request->parent_id,
                 'user_id'    => $user->id
             ]);
@@ -36,11 +37,10 @@ class ArticleCommentController extends Controller
      *
      * @param  int  $id
      */
-    public function show($articleId, $commentId)
+    public function show(Article $article, Comment $comment)
     {
-        $comment = new CommentResource(Comment::find($commentId));
-        if ($comment){
-            return $comment->toArray($articleId);
+        if ($comment && ($comment->article_id == $article->id)){
+            return new CommentResource($comment);
         } else {
             return response()->json([
                 'message' => 'Comment not found'
@@ -52,17 +52,15 @@ class ArticleCommentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  CommentApiRequest  $request
-     * @param  int  $id
      */
-    public function update(CommentApiRequest $request, $id, $commentId)
+    public function update(CommentApiRequest $request, Article $article, Comment $comment)
     {
-        $comment = (new CommentResource(Comment::where("id", '=', "$commentId")->first()));
         $user = JWTAuth::parseToken()->authenticate();
-        if ($comment && ($comment->user_id == $user->id)) {
+        if ($comment && ($comment->user_id == $user->id) && ($comment->article_id == $article->id)) {
             $comment->resource->body = $request->body;
             $comment->resource->save();
 
-            return $comment->toArray($id);
+            return new CommentResource($comment);
         } else {
             return response()->json([
                 'message' => 'Comment not found'
@@ -75,9 +73,8 @@ class ArticleCommentController extends Controller
      *
      * @param  int  $id
      */
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-        $comment = Comment::find($id);
         $user = JWTAuth::parseToken()->authenticate();
         if ($comment && ($comment->user_id == $user->id)) {
             $comment->delete();
@@ -91,7 +88,8 @@ class ArticleCommentController extends Controller
             ]);
         }
     }
-    public function showAll($articleId) {
-        return CommentResource::collection(Comment::where('article_id', '=', "$articleId")->paginate(20));
+    public function showAll(Article $article) {
+
+        return CommentResource::collection(Comment::where('article_id', '=', "$article->id")->paginate(20));
     }
 }

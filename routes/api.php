@@ -50,7 +50,7 @@ Route::apiresources([
     'articles.comments'=> ArticleCommentController::class
 ]);
 
-    Route::get('allComments/{article_id}', [ ArticleCommentController::class, 'showAll' ])->name('allComments');
+    Route::get('allComments/{article}', [ ArticleCommentController::class, 'showAll' ])->name('allComments');
 });
 
 

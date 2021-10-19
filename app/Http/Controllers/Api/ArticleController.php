@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleApiRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-use http\Env\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ArticleController extends Controller
@@ -38,28 +37,28 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Article $articleResource
      */
-    public function show(Article $id)
+    public function show(Article $articleResource)
     {
-        return new ArticleResource(Article::findOrFail($id));
+        return new ArticleResource(Article::find($articleResource->id));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  ArticleApiRequest  $request
-     * @param  int  $id
+     * @param  Article $articleResource
      */
-    public function update(ArticleApiRequest $request, $id)
+    public function update(ArticleApiRequest $request, Article $articleResource)
     {
-            $article = (new ArticleResource(Article::find($id)));
             $user = JWTAuth::parseToken()->authenticate();
-            if ($article && ($article->user_id == $user->id)) {
-                $article->resource->title = $request->title;
-                $article->resource->body  = $request->body;
-                $article->resource->save();
-                return $article->toArray($request);
+            if ($articleResource && ($articleResource->user_id == $user->id)) {
+                $articleResource->title = $request->title;
+                $articleResource->body  = $request->body;
+                $articleResource->save();
+
+                return new ArticleResource($articleResource);
             } else {
                 return response()->json([
                     'message' => 'Article not found'
@@ -71,21 +70,20 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Article $articleResource
      */
-    public function destroy($id)
+    public function destroy(Article $articleResource)
     {
-        $article = Article::find($id);
         $user = JWTAuth::parseToken()->authenticate();
-        if ($article && ($article->user_id == $user->id)) {
-            $article->delete();
+        if ($articleResource && ($articleResource->user_id == $user->id)) {
+            $articleResource->delete();
 
             return response()->json([
-                'message' => "article successfully deleted"
+                'message' => "Article successfully deleted"
             ]);
         } else {
             return response()->json([
-                'message' => 'article not found'
+                'message' => 'Article not found'
             ]);
         }
     }
