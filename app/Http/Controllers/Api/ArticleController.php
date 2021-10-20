@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleApiRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
+use App\Models\User;
+use http\Env\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ArticleController extends Controller
 {
-
     public function index()
     {
         return ArticleResource::collection(Article::paginate(20));
@@ -22,13 +23,13 @@ class ArticleController extends Controller
      */
     public function store(ArticleApiRequest $request)
     {
-            $user = JWTAuth::parseToken()->authenticate();
-            $user->articles()->create([
+        $user = auth('api')->user();
+        $user->articles()->create([
                 'title'     => $request->title,
                 'body'      => $request->body,
             ]);
 
-            return response()->json([
+        return response()->json([
                 'message' => 'Article Successfully created',
             ]);
     }
@@ -52,19 +53,12 @@ class ArticleController extends Controller
      */
     public function update(ArticleApiRequest $request, Article $articleResource)
     {
-            $user = JWTAuth::parseToken()->authenticate();
-            if ($articleResource && ($articleResource->user_id == $user->id)) {
-                $articleResource->title = $request->title;
-                $articleResource->body  = $request->body;
-                $articleResource->save();
+        $this->authorize('update', $articleResource);
+        $articleResource->title = $request->title;
+        $articleResource->body  = $request->body;
+        $articleResource->save();
 
-                return new ArticleResource($articleResource);
-            } else {
-                return response()->json([
-                    'message' => 'Article not found'
-                ]);
-            }
-
+        return new ArticleResource($articleResource);
     }
 
     /**
@@ -74,17 +68,11 @@ class ArticleController extends Controller
      */
     public function destroy(Article $articleResource)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if ($articleResource && ($articleResource->user_id == $user->id)) {
-            $articleResource->delete();
+        $this->authorize('delete', $articleResource);
+        $articleResource->delete();
 
-            return response()->json([
-                'message' => "Article successfully deleted"
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Article not found'
-            ]);
-        }
+        return response()->json([
+            'message' => "Article successfully deleted"
+        ]);
     }
 }

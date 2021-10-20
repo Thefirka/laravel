@@ -8,7 +8,6 @@ use Illuminate\Contracts\Validation\Validator;
 
 class CommentApiRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *

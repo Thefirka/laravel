@@ -16,10 +16,10 @@ class ArticleController extends Controller
     public const NEXTARTICLE     = 'My Next Article';
     public function allCurrentUserArticles()
     {
-            $currentUser = Auth::user()->id;
-            $articles = Article::where('user_id', '=', "$currentUser")->get();
+        $currentUser = Auth::user()->id;
+        $articles = Article::where('user_id', '=', "$currentUser")->get();
 
-            return view('currentUserArticles', ['articles' => $articles]);
+        return view('currentUserArticles', ['articles' => $articles]);
     }
 
     public function allArticles()
@@ -55,7 +55,7 @@ class ArticleController extends Controller
 
                     static $commentShow;
                     static $rightPosition;
-                     $commentShow .= " <div style=\"width:250px;height:50px;border:1px solid #000;\">{$comment->body}</div>
+                    $commentShow .= " <div style=\"width:250px;height:50px;border:1px solid #000;\">{$comment->body}</div>
 <br>
     <form action=\"".route('newComment') ."\" method='post'>
     <input type=\"hidden\" name=\"_token\" value=\"". csrf_token()."\"/>
@@ -67,7 +67,6 @@ class ArticleController extends Controller
     </div>
     <br>";
                     if ($comment->parent && (!$comment->children->all())) {
-
                         $rightPosition = 250;
                         $nextLevel = "<div style = \"position:relative;"."left:$rightPosition".'px'.";\"top: 20px;\">";
                         $commentShow .= $nextLevel;
@@ -78,7 +77,6 @@ class ArticleController extends Controller
                         $commentShow .= $nextLevel;
                         $recursion($comment->children, $article_id);
                     }
-
                 }
                 return $commentShow;
             };
@@ -89,7 +87,7 @@ class ArticleController extends Controller
         if ($article) {
             return view('article', [ 'article' => $article, 'commentShow' => $commentShow ]);
         } else {
-           return redirect('/');
+            return redirect('/');
         }
     }
 
@@ -98,7 +96,6 @@ class ArticleController extends Controller
         $loadArticle = $request->post('LoadArticle');
 
         if ($loadArticle === self::PREVIOUSARTICLE) {
-
             $currentArticle = Article::where('title', '=', "$slug")->first();
             $currentArticleTimestamp = ($currentArticle->created_at->timestamp);
             $currentUser = Auth::user()->id;
@@ -111,7 +108,6 @@ class ArticleController extends Controller
                 }
             }
         } elseif ($loadArticle === self::NEXTARTICLE) {
-
             $currentArticle = Article::where('title', '=', "$slug")->first();
             $currentArticleTimestamp = ($currentArticle->created_at->timestamp);
             $currentUser = Auth::user()->id;
@@ -119,7 +115,6 @@ class ArticleController extends Controller
 
             foreach ($articles as $article) {
                 if ($article->created_at->timestamp > $currentArticleTimestamp) {
-
                     return redirect(route('article', $article->title));
                 }
             }
