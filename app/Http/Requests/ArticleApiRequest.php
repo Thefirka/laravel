@@ -8,7 +8,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ArticleApiRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *

@@ -29,7 +29,6 @@ Route::group([
     Route::post('login', [ AuthController::class, 'login' ])->name('loginApi');
 
     Route::post('register', [ AuthController::class, 'register' ])->name('registerApi');
-
 });
 
 Route::group([
@@ -44,13 +43,10 @@ Route::group([
     Route::post('refresh', [ AuthController::class, 'refresh' ])->name('refresh');
 });
 Route::group(['middleware' => 'jwt.verify'], function () {
-
-Route::apiresources([
+    Route::apiresources([
     'articleResource'  => ArticleController::class,
     'articles.comments'=> ArticleCommentController::class
 ]);
 
     Route::get('allComments/{article}', [ ArticleCommentController::class, 'showAll' ])->name('allComments');
 });
-
-

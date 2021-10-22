@@ -5,6 +5,7 @@ use App\Http\Controllers\Front\CommentController;
 use App\Http\Controllers\Front\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,10 +26,9 @@ Route::post('/my-register-post', [ UserController::class, 'registerPost' ])->nam
 Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/new-article', [ ArticleController::class, 'newArticle' ])->name('newArticle');
 
-    Route::get('/new-article', [ ArticleController::class, 'newArticle' ] )->name('newArticle');
-
-    Route::post('/new-article', [ ArticleController::class, 'createArticle' ] );
+    Route::post('/new-article', [ ArticleController::class, 'createArticle' ]);
 
     Route::post('/loadArticle/{slug}', [ ArticleController::class, 'loadArticle' ])->name('loadArticle');
 
@@ -40,4 +40,3 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/article/{slug}', [ ArticleController::class, 'showArticle' ])->name('article');
-

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CommentRequest;
 use Illuminate\Support\Facades\Auth;
 
-
 class CommentController extends Controller
 {
     public function store(CommentRequest $commentRequest)
