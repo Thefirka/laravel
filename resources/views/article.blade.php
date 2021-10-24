@@ -2,6 +2,8 @@
 
 @section('content')
  {{$article->body}}
+ <p>At that moment temperature was {{$article->temperature}} Celsius</p>
+ <p>And the weather were {{$article->weather_description}}</p>
  <form action="{{ route('newComment') }}" method="post">
      @csrf
      <input type="hidden" name="_token" value="{{ csrf_token() }}"/>

@@ -36,7 +36,7 @@ Route::group([
     'middleware'=> ['jwt.verify']
 
 ], function () {
-    Route::post('logout', [ AuthController::class, 'logout' ])->name('logout');
+    Route::post('logout', [ AuthController::class, 'logout' ])->name('logoutApi');
 
     Route::post('me', [ AuthController::class, 'me' ])->name('me');
 

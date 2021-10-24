@@ -23,7 +23,9 @@ class Article extends Model
         'title',
         'body',
         'user_id',
-        'comment_id'
+        'comment_id',
+        'temperature',
+        'weather_description'
     ];
 
     public function user()

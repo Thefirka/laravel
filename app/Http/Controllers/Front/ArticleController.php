@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
 use App\Models\Comment;
+use App\Services\CurrentWeather;
+use App\Services\IOpenWeather;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,12 +36,15 @@ class ArticleController extends Controller
         return view('newArticle');
     }
 
-    public function createArticle(ArticleRequest $articleRequest)
+    public function createArticle(ArticleRequest $articleRequest, IOpenWeather $currentWeather)
     {
         $user = Auth::user();
+        $currentWeather->temperature;
         $user->articles()->create([
             'title'     => $articleRequest->title,
             'body'      => $articleRequest->body,
+            'temperature' => $currentWeather->temperature,
+            'weather_description' => $currentWeather->weather
         ]);
         return redirect(route('home'));
     }
