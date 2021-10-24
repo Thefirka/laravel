@@ -20,6 +20,7 @@ class CreateArticlesTable extends Migration
             $table->text('body');
             $table->string('temperature');
             $table->string('weather_description');
+            $table->string('comments')->default('No');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
         });
