@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Article;
 use Illuminate\Console\Command;
+use mysql_xdevapi\XSession;
 
 class DeleteArticlesWithoutComments extends Command
 {
@@ -38,9 +39,9 @@ class DeleteArticlesWithoutComments extends Command
      */
     public function handle()
     {
-        $articles = Article::where('comments', '=', 'No')->get();
+        $articles = Article::all();
         foreach ($articles as $article) {
-            if ($article->whereDate('created_at', '<=', now()->subDays(7)->startOfDay()->toDateTimeString())) {
+            if ($article->whereDate('created_at', '<=', now()->subDays(7)->startOfDay()->toDateTimeString()) && !($article->comments()->exists())) {
                 $article->delete();
             }
         }

@@ -12,9 +12,6 @@ class CommentController extends Controller
     public function store(CommentRequest $commentRequest)
     {
         $user = Auth::user();
-        $article = Article::where('id', '=', "$commentRequest->article_id")->first();
-        $article->comments = "yes";
-        $article->save();
         $user->comments()->create([
             'body' => $commentRequest->body,
             'article_id' => $commentRequest->article_id,

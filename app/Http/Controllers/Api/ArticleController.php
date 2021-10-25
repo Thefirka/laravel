@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleApiRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-use App\Models\User;
-use http\Env\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Services\OpenWeatherApi\CurrentWeather;
 
 class ArticleController extends Controller
 {
@@ -24,10 +22,13 @@ class ArticleController extends Controller
     public function store(ArticleApiRequest $request)
     {
         $user = auth('api')->user();
+        $weather = CurrentWeather::getWeather();
         $user->articles()->create([
-                'title'     => $request->title,
-                'body'      => $request->body,
-            ]);
+            'title'     => $request->title,
+            'body'      => $request->body,
+            'temperature' => $weather['temperature'],
+            'weather_description' => $weather['weather_description']
+        ]);
 
         return response()->json([
                 'message' => 'Article Successfully created',
