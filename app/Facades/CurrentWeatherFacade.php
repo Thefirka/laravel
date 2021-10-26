@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services\OpenWeatherApi;
+namespace App\Facades;
 
 
 class CurrentWeatherFacade
