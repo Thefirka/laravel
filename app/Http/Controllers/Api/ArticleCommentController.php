@@ -12,7 +12,7 @@ class ArticleCommentController extends Controller
 {
     public function index()
     {
-         return CommentResource::collection(Comment::paginate(20));
+        return CommentResource::collection(Comment::paginate(20));
     }
 
     /**
@@ -22,8 +22,9 @@ class ArticleCommentController extends Controller
      */
     public function store(Article $article, CommentApiRequest $request)
     {
-         $user = auth('api')->user();
-         $user->comments()->create([
+        $user = auth('api')->user();
+
+        $user->comments()->create([
                  'body'       => $request->body,
                  'article_id' => $article->id,
                  'parent_id'  => $request->parent_id,
@@ -38,13 +39,13 @@ class ArticleCommentController extends Controller
      */
     public function show(Article $article, Comment $comment)
     {
-         if ($comment->article_id == $article->id) {
-             return new CommentResource($comment);
-         } else {
-             return response()->json([
-                 'message' => 'Comment belongs to different article'
-             ]);
+        if ($comment->article_id == $article->id) {
+            return new CommentResource($comment);
         }
+
+        return response()->json([
+            'message' => 'Comment belongs to different article'
+         ]);
     }
 
     /**
@@ -54,17 +55,17 @@ class ArticleCommentController extends Controller
      */
     public function update(CommentApiRequest $request, Article $article, Comment $comment)
     {
-         if ($comment->article_id == $article->id) {
-             $this->authorize('update', $comment);
-             $comment->resource->body = $request->body;
-             $comment->resource->save();
+        if ($comment->article_id == $article->id) {
+            $this->authorize('update', $comment);
+            $comment->resource->body = $request->body;
+            $comment->resource->save();
 
-             return new CommentResource($comment);
-         } else {
-             return response()->json([
-                'message' => 'Comment belongs to different article'
-             ]);
-         }
+            return new CommentResource($comment);
+        }
+
+        return response()->json([
+            'message' => 'Comment belongs to different article'
+         ]);
     }
 
     /**
@@ -81,6 +82,7 @@ class ArticleCommentController extends Controller
                 'message' => "Comment successfully deleted"
             ]);
     }
+
     public function showAll(Article $article)
     {
         return CommentResource::collection(Comment::where('article_id', '=', "$article->id")->paginate(20));

@@ -40,11 +40,16 @@ class DeleteArticlesWithoutComments extends Command
     public function handle()
     {
         $articles = Article::all();
+
         foreach ($articles as $article) {
-            if ($article->whereDate('created_at', '<=', now()->subDays(7)->startOfDay()->toDateTimeString()) && !($article->comments()->exists())) {
+            if (
+                $article->whereDate('created_at', '<=', now()->subDays(7)->startOfDay()->toDateTimeString())
+                && !($article->comments()->exists())
+            ) {
                 $article->delete();
             }
         }
+
         return Command::SUCCESS;
     }
 }

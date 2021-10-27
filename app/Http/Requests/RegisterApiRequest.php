@@ -16,6 +16,7 @@ class RegisterApiRequest extends FormRequest
             'data'      => $validator->errors()
         ]));
     }
+
     public function rules()
     {
         return [
@@ -24,6 +25,7 @@ class RegisterApiRequest extends FormRequest
             'password' => 'required|alpha_num|min:8|max:12',
         ];
     }
+
     public function messages()
     {
         return [

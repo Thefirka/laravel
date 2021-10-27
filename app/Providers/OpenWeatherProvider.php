@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\CurrentWeather;
-use App\Services\IOpenWeather;
+use App\Services\OpenWeatherApi\CurrentWeather;
+use App\Services\OpenWeatherApi\IOpenWeather;
 use Illuminate\Support\ServiceProvider;
 
 class OpenWeatherProvider extends ServiceProvider

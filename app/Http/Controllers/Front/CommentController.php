@@ -12,11 +12,13 @@ class CommentController extends Controller
     public function store(CommentRequest $commentRequest)
     {
         $user = Auth::user();
+
         $user->comments()->create([
             'body' => $commentRequest->body,
             'article_id' => $commentRequest->article_id,
             'parent_id'  => $commentRequest->parent_id
         ]);
+
         return back();
     }
 }
