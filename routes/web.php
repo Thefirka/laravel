@@ -28,6 +28,8 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/new-article', [ ArticleController::class, 'newArticle' ])->name('newArticle');
 
+    Route::get('/articles-tag/', [ ArticleController::class, 'findArticlesByTag' ])->name('findByTag');
+
     Route::post('/new-article', [ ArticleController::class, 'createArticle' ]);
 
     Route::post('/loadArticle/{slug}', [ ArticleController::class, 'loadArticle' ])->name('loadArticle');

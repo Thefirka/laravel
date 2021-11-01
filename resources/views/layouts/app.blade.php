@@ -53,7 +53,20 @@
                             <div align="center">
                                 <a href="{{route('articles')}}">All my articles</a>
                                 <a href="{{route('newArticle')}}">Make new Article</a>
+                                <form action="{{ route('findByTag') }}" method="get">
+                                    Find articles by tags (separated by coma) <input type="text" name="tags">
+                                    <input type="submit">
+                                </form>
                             </div>
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             You are logged in as {{ Auth::user()->name }}
                         @endif
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">

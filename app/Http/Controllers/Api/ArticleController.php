@@ -14,6 +14,8 @@ class ArticleController extends Controller
     {
         return ArticleResource::collection(Article::paginate(20));
     }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -46,12 +48,15 @@ class ArticleController extends Controller
         return new ArticleResource(Article::find($articleResource->id));
     }
 
+
     /**
      * Update the specified resource in storage.
      *
      * @param  ArticleApiRequest  $request
      * @param  Article $articleResource
      */
+
+
     public function update(ArticleApiRequest $request, Article $articleResource)
     {
         $this->authorize('update', $articleResource);
@@ -67,6 +72,8 @@ class ArticleController extends Controller
      *
      * @param  Article $articleResource
      */
+
+
     public function destroy(Article $articleResource)
     {
         $this->authorize('delete', $articleResource);
