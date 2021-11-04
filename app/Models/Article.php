@@ -67,4 +67,9 @@ class Article extends Model
     {
         return $this->belongsToMany(Tag::class);
     }
+
+    public function image()
+    {
+        return $this->morphOne(image::class, 'imageable');
+    }
 }

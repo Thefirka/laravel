@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [ ArticleController::class, 'allArticles' ])->name('home');
+Route::get('/', [ ArticleController::class, 'home' ])->name('home');
 
 Route::get('/my-register', [ UserController::class, 'registerNewUser' ])->name('myRegister');
 

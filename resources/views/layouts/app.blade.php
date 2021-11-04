@@ -23,7 +23,7 @@
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
+            <a class="navbar-brand" href="{{ route('home') }}">
                 {{ config('app.name', 'Laravel') }}
             </a>
 
@@ -53,8 +53,12 @@
                             <div align="center">
                                 <a href="{{route('articles')}}">All my articles</a>
                                 <a href="{{route('newArticle')}}">Make new Article</a>
-                                <form action="{{ route('findByTag') }}" method="get">
-                                    Find articles by tags (separated by coma) <input type="text" name="tags">
+                                <form action="{{ route('findByTag')}}" method="GET">
+                                    Find articles by tags (separated by coma) <input type="text" name="tags"
+                                    @if(request('tags'))
+                                        value="{{request('tags')}}"
+                                    @endif
+                                        >
                                     <input type="submit">
                                 </form>
                             </div>

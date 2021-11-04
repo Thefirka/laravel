@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Filters\QueryFilters;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\SlugOptions;
 
 class Tag extends Model
 {
@@ -16,5 +16,9 @@ class Tag extends Model
     public function articles()
     {
         return $this->belongsToMany(Article::class);
+    }
+    public function scopeFilter(Builder $builder, QueryFilters $filter)
+    {
+        return $filter->apply($builder);
     }
 }

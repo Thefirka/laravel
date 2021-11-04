@@ -73,4 +73,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function image()
+    {
+        return $this->morphOne(image::class, 'imageable');
+    }
 }

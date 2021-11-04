@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Filters\ArticleFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleRequest;
 use App\Http\Requests\CategoryRequest;
@@ -11,9 +12,9 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Services\OpenWeatherApi\CurrentWeather;
 use App\Services\PrepareTags;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
@@ -27,31 +28,17 @@ class ArticleController extends Controller
         return view('currentUserArticles', ['articles' => $articles]);
     }
 
-    public function allArticles()
+    public function home()
     {
         $articles = Article::paginate(10);
         return view('home', [ 'articles' => $articles ]);
     }
 
-    public function findArticlesByTag(TagRequest $tagRequest)
+    public function findArticlesByTag(TagRequest $tagRequest, ArticleFilter $articleFilter)
     {
-
-        $tags = PrepareTags::prepareTags($tagRequest);
-        $articles = [];
-
-        foreach ($tags as $tag) {
-            $tag = Tag::where('name', $tag)->with('articles')->first();
-            if ($tag) {
-                $articles[] = $tag->articles;
-            }
-        }
-        $allArticles = new Collection();
-
-            foreach ($articles as $articlesOfTag) {
-               $allArticles = $allArticles->merge($articlesOfTag);
-            }
-
-        return view('articlesByTags', [ 'articles' => isset($allArticles) ? $allArticles : '']);
+        return view('articlesByTags', [
+            'articles' => $articleFilter->tags(PrepareTags::prepareTags($tagRequest))
+        ]);
     }
 
     public function newArticle()
