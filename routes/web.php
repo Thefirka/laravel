@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Front\ArticleController;
 use App\Http\Controllers\Front\CommentController;
+use App\Http\Controllers\Front\UploadController;
 use App\Http\Controllers\Front\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +39,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/articles', [ ArticleController::class, 'allCurrentUserArticles' ])->name('articles');
 
-    Route::post('/commentController/store', [ CommentController::class, 'store'])->name('newComment');
+    Route::post('/commentController/store', [ CommentController::class, 'store' ])->name('newComment');
+
+    Route::post('/uploadImage', [ UploadController::class, 'uploadImage' ])->name('uploadImage');
 });
 
 Route::get('/article/{slug}', [ ArticleController::class, 'showArticle' ])->name('article');

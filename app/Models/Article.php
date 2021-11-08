@@ -26,7 +26,6 @@ class Article extends Model
         'title',
         'body',
         'user_id',
-        'comment_id',
         'temperature',
         'weather_description'
     ];
@@ -68,7 +67,7 @@ class Article extends Model
         return $this->belongsToMany(Tag::class);
     }
 
-    public function image()
+    public function images()
     {
         return $this->morphOne(image::class, 'imageable');
     }

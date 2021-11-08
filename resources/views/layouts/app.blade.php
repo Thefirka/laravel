@@ -72,6 +72,11 @@
                                 </div>
                             @endif
                             You are logged in as {{ Auth::user()->name }}
+                            <form action="{{route('uploadImage')}}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                Upload avatar: <input type="file" name="image">
+                                <input type="submit">
+                            </form>
                         @endif
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ route('logout') }}"

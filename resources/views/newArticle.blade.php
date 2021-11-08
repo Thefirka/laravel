@@ -7,23 +7,14 @@
 
         <title>New Article</title>
     </head>
-<form action="{{ route('newArticle') }}" method="post">
+<form action="{{ route('newArticle') }}" method="post" enctype="multipart/form-data">
     @csrf
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
     Article title <input type="text" name="title">
     Article body <textarea rows = "5" cols = "50" name = "body"></textarea>
     Add category <input type="text" name="category">
     <br>
+    Upload Article Image: <input type="file" name="image">
     <br>
     Add tags (separated by coma) <input type="text" name="tags">
     <br>

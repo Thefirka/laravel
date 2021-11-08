@@ -7,14 +7,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleRequest;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\TagRequest;
+use App\Http\Requests\UploadImageRequest;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Services\OpenWeatherApi\CurrentWeather;
 use App\Services\PrepareTags;
+use App\Services\UploadImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -25,7 +27,7 @@ class ArticleController extends Controller
     {
         $articles = Auth::user()->articles()->get();
 
-        return view('currentUserArticles', ['articles' => $articles]);
+        return view('currentUserArticles', [ 'articles' => $articles ]);
     }
 
     public function home()
@@ -46,8 +48,10 @@ class ArticleController extends Controller
         return view('newArticle');
     }
 
-    public function createArticle(ArticleRequest $articleRequest, CategoryRequest $categoryRequest, TagRequest $tagRequest)
+    public function createArticle(ArticleRequest $articleRequest, CategoryRequest $categoryRequest,
+                                  TagRequest $tagRequest, UploadImageRequest $imageRequest)
     {
+
         $weather = CurrentWeather::getWeather();
 
         $article = Auth::user()->articles()->create([
@@ -68,6 +72,10 @@ class ArticleController extends Controller
                 ['name' => $tag],
                 ['name' => $tag])->articles()->attach($article);
         }
+
+        $article->images()->create([
+            'url' => UploadImage::uploadImage($imageRequest)
+        ]);
 
         return redirect(route('home'));
     }
