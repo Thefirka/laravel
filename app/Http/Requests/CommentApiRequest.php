@@ -19,6 +19,7 @@ class CommentApiRequest extends FormRequest
             'body'       => 'required|max:300',
         ];
     }
+
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([

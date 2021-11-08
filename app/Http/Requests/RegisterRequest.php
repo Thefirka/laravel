@@ -29,6 +29,7 @@ class RegisterRequest extends FormRequest
             'password' => 'required|alpha_num|min:8|max:12',
         ];
     }
+
     public function messages()
     {
         return [

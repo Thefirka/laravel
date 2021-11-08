@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Front\ArticleController;
 use App\Http\Controllers\Front\CommentController;
+use App\Http\Controllers\Front\UploadController;
 use App\Http\Controllers\Front\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [ ArticleController::class, 'allArticles' ])->name('home');
+Route::get('/', [ ArticleController::class, 'home' ])->name('home');
 
 Route::get('/my-register', [ UserController::class, 'registerNewUser' ])->name('myRegister');
 
@@ -28,6 +29,8 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/new-article', [ ArticleController::class, 'newArticle' ])->name('newArticle');
 
+    Route::get('/articles-tag/', [ ArticleController::class, 'findArticlesByTag' ])->name('findByTag');
+
     Route::post('/new-article', [ ArticleController::class, 'createArticle' ]);
 
     Route::post('/loadArticle/{slug}', [ ArticleController::class, 'loadArticle' ])->name('loadArticle');
@@ -36,7 +39,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/articles', [ ArticleController::class, 'allCurrentUserArticles' ])->name('articles');
 
-    Route::post('/commentController/store', [ CommentController::class, 'store'])->name('newComment');
+    Route::post('/commentController/store', [ CommentController::class, 'store' ])->name('newComment');
+
+    Route::post('/uploadImage', [ UploadController::class, 'uploadImage' ])->name('uploadImage');
 });
 
 Route::get('/article/{slug}', [ ArticleController::class, 'showArticle' ])->name('article');

@@ -23,12 +23,13 @@ class ArticleCommentController extends Controller
     public function store(Article $article, CommentApiRequest $request)
     {
         $user = auth('api')->user();
+
         $user->comments()->create([
-                'body'       => $request->body,
-                'article_id' => $article->id,
-                'parent_id'  => $request->parent_id,
-                'user_id'    => $user->id
-            ]);
+                 'body'       => $request->body,
+                 'article_id' => $article->id,
+                 'parent_id'  => $request->parent_id,
+                 'user_id'    => $user->id
+             ]);
     }
 
     /**
@@ -40,11 +41,11 @@ class ArticleCommentController extends Controller
     {
         if ($comment->article_id == $article->id) {
             return new CommentResource($comment);
-        } else {
-            return response()->json([
-                'message' => 'Comment belongs to different article'
-            ]);
         }
+
+        return response()->json([
+            'message' => 'Comment belongs to different article'
+         ]);
     }
 
     /**
@@ -60,11 +61,11 @@ class ArticleCommentController extends Controller
             $comment->resource->save();
 
             return new CommentResource($comment);
-        } else {
-            return response()->json([
-                'message' => 'Comment belongs to different article'
-            ]);
         }
+
+        return response()->json([
+            'message' => 'Comment belongs to different article'
+         ]);
     }
 
     /**
@@ -81,6 +82,7 @@ class ArticleCommentController extends Controller
                 'message' => "Comment successfully deleted"
             ]);
     }
+
     public function showAll(Article $article)
     {
         return CommentResource::collection(Comment::where('article_id', '=', "$article->id")->paginate(20));

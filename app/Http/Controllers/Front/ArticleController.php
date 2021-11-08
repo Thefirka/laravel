@@ -2,31 +2,45 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Filters\ArticleFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleRequest;
+use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\TagRequest;
+use App\Http\Requests\UploadImageRequest;
 use App\Models\Article;
-use App\Models\Comment;
-use GuzzleHttp\Client;
+use App\Models\Category;
+use App\Models\Tag;
+use App\Services\OpenWeatherApi\CurrentWeather;
+use App\Services\PrepareTags;
+use App\Services\UploadImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
     public const PREVIOUSARTICLE = 'My Previous Article';
     public const NEXTARTICLE     = 'My Next Article';
+
     public function allCurrentUserArticles()
     {
-        $currentUser = Auth::user()->id;
-        $articles = Article::where('user_id', '=', "$currentUser")->get();
+        $articles = Auth::user()->articles()->get();
 
-        return view('currentUserArticles', ['articles' => $articles]);
+        return view('currentUserArticles', [ 'articles' => $articles ]);
     }
 
-    public function allArticles()
+    public function home()
     {
-        $articles = Article::paginate(2);
-
+        $articles = Article::paginate(10);
         return view('home', [ 'articles' => $articles ]);
+    }
+
+    public function findArticlesByTag(TagRequest $tagRequest, ArticleFilter $articleFilter)
+    {
+        return view('articlesByTags', [
+            'articles' => $articleFilter->tags(PrepareTags::prepareTags($tagRequest))
+        ]);
     }
 
     public function newArticle()
@@ -34,21 +48,46 @@ class ArticleController extends Controller
         return view('newArticle');
     }
 
-    public function createArticle(ArticleRequest $articleRequest)
+    public function createArticle(ArticleRequest $articleRequest, CategoryRequest $categoryRequest,
+                                  TagRequest $tagRequest, UploadImageRequest $imageRequest)
     {
-        $user = Auth::user();
-        $user->articles()->create([
-            'title'     => $articleRequest->title,
-            'body'      => $articleRequest->body,
+
+        $weather = CurrentWeather::getWeather();
+
+        $article = Auth::user()->articles()->create([
+            'title'               => $articleRequest->title,
+            'body'                => $articleRequest->body,
+            'temperature'         => $weather['temperature'],
+            'weather_description' => $weather['weather_description']
         ]);
+
+        Category::firstOrCreate(
+            ['name' => $categoryRequest->category],
+            ['name' => $categoryRequest->category])->articles()->attach($article);
+
+        $tags = PrepareTags::prepareTags($tagRequest);
+
+        foreach ($tags as $tag) {
+           Tag::firstOrCreate(
+                ['name' => $tag],
+                ['name' => $tag])->articles()->attach($article);
+        }
+
+        $article->images()->create([
+            'url' => UploadImage::uploadImage($imageRequest)
+        ]);
+
         return redirect(route('home'));
     }
+
     public function showArticle($slug)
     {
-        $article  = Article::where('title', '=', "$slug")->first();
-        if (Comment::where('article_id', '=', "$article->id")->get()->all()) {
+        $article  = Article::where('slug', $slug)->with('categories')->firstOrFail();
+        if ($article->comments()->exists()) {
             $article_id = $article->id;
-            $comments = Comment::where('article_id', '=', "$article->id")->get()->toTree();
+
+            $comments = $article->comments()->get()->toTree();
+
             $recursion = function ($comments, $article_id) use (&$recursion) {
                 foreach ($comments as $comment) {
                     $comment_id = $comment->id;
@@ -71,61 +110,60 @@ class ArticleController extends Controller
                         $nextLevel = "<div style = \"position:relative;"."left:$rightPosition".'px'.";\"top: 20px;\">";
                         $commentShow .= $nextLevel;
                     }
+
                     if ($comment->children->all()) {
                         $rightPosition += 250;
                         $nextLevel = "<div style = \"position:relative;"."left:$rightPosition".'px'.";\"top: 20px;\">";
                         $commentShow .= $nextLevel;
                         $recursion($comment->children, $article_id);
                     }
+
+                    if (!$comment->parent && (!$comment->children->all())) {
+                        $rightPosition = 0;
+                        $nextLevel = "<div style = \"position:relative;"."left:$rightPosition".'px'.";\"top: 20px;\">";
+                        $commentShow .= $nextLevel;
+                    }
                 }
+
                 return $commentShow;
             };
             $commentShow = $recursion($comments, $article_id);
-        } else {
-            $commentShow = "";
         }
-        if ($article) {
-            return view('article', [ 'article' => $article, 'commentShow' => $commentShow ]);
-        } else {
-            return redirect('/');
-        }
+
+            return view('article', [
+                'article' => $article, 'commentShow' => isset($commentShow) ? $commentShow : ''
+            ]);
     }
 
     public function loadArticle($slug, Request $request)
     {
         $loadArticle = $request->post('LoadArticle');
+        $currentArticle = Article::where('slug', '=', $slug)->first();
+        $currentArticleDate = ($currentArticle->created_at);
+        $article = Auth::user()->articles();
 
-        if ($loadArticle === self::PREVIOUSARTICLE) {
-            $currentArticle = Article::where('title', '=', "$slug")->first();
-            $currentArticleTimestamp = ($currentArticle->created_at->timestamp);
-            $currentUser = Auth::user()->id;
-            $articles = Article::where('user_id', '=', "$currentUser")->get()->all();
-            $articles = array_reverse($articles);
-
-            foreach ($articles as $article) {
-                if ($article->created_at->timestamp < $currentArticleTimestamp) {
-                    return redirect(route('article', $article->title));
-                }
-            }
-        } elseif ($loadArticle === self::NEXTARTICLE) {
-            $currentArticle = Article::where('title', '=', "$slug")->first();
-            $currentArticleTimestamp = ($currentArticle->created_at->timestamp);
-            $currentUser = Auth::user()->id;
-            $articles = Article::where('user_id', '=', "$currentUser")->get();
-
-            foreach ($articles as $article) {
-                if ($article->created_at->timestamp > $currentArticleTimestamp) {
-                    return redirect(route('article', $article->title));
-                }
-            }
+        switch ($loadArticle) {
+            case self::PREVIOUSARTICLE:
+                $article
+                ->where('created_at', '<', $currentArticleDate)
+                ->orderBy('created_at','DESC');
+                break;
+            case self::NEXTARTICLE:
+                $article
+                ->where('created_at', '>', $currentArticleDate)
+                ->orderBy('created_at','ASC');
+                break;
         }
 
-        return redirect(route('article', $slug));
+        $article = $article->first();
+
+        return  redirect(route('article', isset($article->slug) ? $article->slug : $slug));
     }
 
     public function deleteArticle($slug)
     {
-        Article::where('title', $slug)->delete();
+        Article::where('slug', $slug)->delete();
+
         return redirect(route('articles'));
     }
 }

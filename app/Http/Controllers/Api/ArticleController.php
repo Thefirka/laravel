@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleApiRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-use App\Models\User;
-use http\Env\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Services\OpenWeatherApi\CurrentWeather;
 
 class ArticleController extends Controller
 {
@@ -16,6 +14,8 @@ class ArticleController extends Controller
     {
         return ArticleResource::collection(Article::paginate(20));
     }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -24,10 +24,13 @@ class ArticleController extends Controller
     public function store(ArticleApiRequest $request)
     {
         $user = auth('api')->user();
+        $weather = CurrentWeather::getWeather();
         $user->articles()->create([
-                'title'     => $request->title,
-                'body'      => $request->body,
-            ]);
+            'title'     => $request->title,
+            'body'      => $request->body,
+            'temperature' => $weather['temperature'],
+            'weather_description' => $weather['weather_description']
+        ]);
 
         return response()->json([
                 'message' => 'Article Successfully created',
@@ -45,12 +48,15 @@ class ArticleController extends Controller
         return new ArticleResource(Article::find($articleResource->id));
     }
 
+
     /**
      * Update the specified resource in storage.
      *
      * @param  ArticleApiRequest  $request
      * @param  Article $articleResource
      */
+
+
     public function update(ArticleApiRequest $request, Article $articleResource)
     {
         $this->authorize('update', $articleResource);
@@ -66,6 +72,8 @@ class ArticleController extends Controller
      *
      * @param  Article $articleResource
      */
+
+
     public function destroy(Article $articleResource)
     {
         $this->authorize('delete', $articleResource);

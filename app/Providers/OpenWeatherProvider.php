@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\OpenWeatherApi\CurrentWeather;
+use App\Services\OpenWeatherApi\IOpenWeather;
 use Illuminate\Support\ServiceProvider;
 
 class OpenWeatherProvider extends ServiceProvider
@@ -13,7 +15,7 @@ class OpenWeatherProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(IOpenWeather::class, CurrentWeather::class);
     }
 
     /**

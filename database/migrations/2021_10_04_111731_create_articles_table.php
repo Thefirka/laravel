@@ -17,7 +17,10 @@ class CreateArticlesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('title');
+            $table->string('slug');
             $table->text('body');
+            $table->string('temperature');
+            $table->string('weather_description');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
         });
